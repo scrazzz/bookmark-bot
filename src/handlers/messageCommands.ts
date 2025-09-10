@@ -12,8 +12,8 @@ import { deleteMessage } from '../utils/helpers'
  * Every component has a `custom_id` that should be defined (I think)?...
  *
  * Currently we have the following cases:
- *   1. User clicks the "Dismiss" button below the bookmarked message in the bot's DMs
- *   2. User clicks the "Confirm DELETE" button that was sent in (1.)
+ *   1. User clicks the "Dismiss" button below the bookmarked message from the bot's DM
+ *   2. User clicks the "DELETE" confirmation button that was sent in (step 1.)
  */
 export async function messageComponentHandler(c: Context, interaction: APIMessageComponentInteraction) {
     const interactionId = interaction.data.custom_id
@@ -44,11 +44,12 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
     if (interactionId.startsWith(ButtonCustomId.bookmarkDismissConfirm)) {
         const bookmarkMessageId = interaction.data.custom_id.split('-')[1]
         // Delete the bookmarked message
+        // interaction.channel.id will be the DMChannel with the bot/app
         await deleteMessage(c.env.DISCORD_BOT_TOKEN, interaction.channel.id, bookmarkMessageId)
         return c.json({
             type: InteractionResponseType.UPDATE_MESSAGE,
             data: {
-                content: `Deleted!`,
+                content: 'Deleted!',
                 flags: MessageFlags.Ephemeral,
                 components: [],
             },

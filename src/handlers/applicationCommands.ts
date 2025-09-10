@@ -77,7 +77,6 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                     components: [
                         {
                             type: ComponentType.TextDisplay,
-                            // content: `**From**: ${toCode(`@${message.author.username}`)}`,
                             content: `**From**: ${toCode(formatUsername(message.author))}`,
                         },
                         {
@@ -120,15 +119,14 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                     })),
                 })
             }
-            // If message has embeds (bots can send embeds)
+            // If message has embeds (bots can send embeds) mention that
             if (message.embeds.length > 0) {
                 bookmarkComponent[0].components.push({
                     type: ComponentType.TextDisplay,
-                    // content: `**Embeds**\n${toCode(`[ Message contains ${message.embeds.length} embed(s) ]`)}`,
                     content: `*-# Original message contains ${message.embeds.length} embeds(s)*`,
                 })
             }
-            // If the message is inside an NSFW channel
+            // If the message is from an NSFW channel add a small warning
             if (interaction.channel.type == ChannelType.GuildText && interaction.channel.nsfw) {
                 bookmarkComponent[0].components.push({
                     type: ComponentType.TextDisplay,
@@ -173,12 +171,12 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                 })
             }
             const bookmarkedMessage = (await bookmarkedMsgResp.json()) as APIMessage
-            const jumpUrlToDMs = createJumpUrl('@me', bookmarkedMessage.channel_id, bookmarkedMessage.id)
+            const bookmarkedJumpUrl = createJumpUrl('@me', bookmarkedMessage.channel_id, bookmarkedMessage.id)
 
             return c.json({
                 type: InteractionResponseType.ChannelMessageWithSource,
                 data: {
-                    content: `✅ Bookmarked message (${jumpUrl}) to [DMs](${jumpUrlToDMs})`,
+                    content: `✅ Bookmarked message (${jumpUrl}) to [DMs](${bookmarkedJumpUrl})`,
                     flags: MessageFlags.Ephemeral,
                 },
             })
