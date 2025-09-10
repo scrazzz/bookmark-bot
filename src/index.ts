@@ -4,6 +4,7 @@ import { verifyKey } from 'discord-interactions'
 import { APIInteraction, InteractionType } from 'discord-api-types/v10'
 import { applicationCommandHandler } from './handlers/applicationCommands'
 import { messageComponentHandler } from './handlers/messageCommands'
+import { DISCORD_BASE_API } from './utils/consts'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
@@ -42,7 +43,7 @@ app.post('/interactions', async (c) => {
 
 // @ts-ignore
 app.get('/register', async (c) => {
-    const resp = await fetch(`https://discord.com/api/v10/applications/${c.env.DISCORD_APPLICATION_ID}/commands`, {
+    const resp = await fetch(`${DISCORD_BASE_API}/applications/${c.env.DISCORD_APPLICATION_ID}/commands`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bot ${c.env.DISCORD_BOT_TOKEN}`,
