@@ -32,13 +32,13 @@ Note: I've added my original `wrangler.jsonc` file to `.gitignore`. If you need 
 
 ### Enviroment / Secrets
 - You need to set 3 env variables in your `.env` file. Create one and add these:
+- You can get the values from discord.dev portal.
 ```
 # .env
 DISCORD_BOT_TOKEN=""
 DISCORD_PUBLIC_KEY=""
 DISCORD_APPLICATION_ID=""
 ```
-You can get the values from the Discord developer portal.
 
 - Cloudflare Workers also need access to the env variables, set it using `wrangler secret put`:
 ```
@@ -58,14 +58,13 @@ After completing the setup steps without errors, you can deploy to Cloudflare Wo
 pnpm run deploy
 ```
 If the deployment is successful:
-- You’ll see a URL like https://bookmark-bot.<account>.workers.dev in your terminal output.
+- You’ll see a URL like `https://bookmark-bot.<account>.workers.dev` in your terminal output.
 - Set the Interactions Endpoint URL to your deployed worker's `/interactions` path in discord.dev portal.
 - Example: `https://bookmark-bot.<account>.workers.dev/interactions`
 
 ### Syncing commands
-Syncing commands is as simple as visiting the `/register` route from your workers.dev URL.
-
-Example: If your workers.dev URL is `https://bookmark-bot.johndoe.workers.dev` then visit `https://bookmark-bot.johndoe.workers.dev/register` in your browser.
+- Syncing commands is as simple as visiting the `/register` route from your workers.dev URL.
+- Example: If your workers.dev URL is `https://bookmark-bot.johndoe.workers.dev` then visit `https://bookmark-bot.johndoe.workers.dev/register` in your browser.
 
 ---
 
