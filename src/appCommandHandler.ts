@@ -48,6 +48,8 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                             type: ComponentType.TextInput,
                             custom_id: TextInputCustomId.configAddName,
                             style: TextInputStyle.Short,
+                            min_length: 3,
+                            max_length: 40,
                         },
                     },
                     {
@@ -58,6 +60,7 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                             type: ComponentType.TextInput,
                             custom_id: TextInputCustomId.configAddWebhook,
                             style: TextInputStyle.Short,
+                            min_length: 115, // 118
                         },
                     },
                 ],
