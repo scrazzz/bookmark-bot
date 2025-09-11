@@ -12,7 +12,7 @@ import {
     MessageFlags,
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { createJumpUrl, formatUsername, toCode, toCodeblock } from '../utils/helpers'
+import { createJumpUrl, formatUsername, toCode, toCodeblock, toUnixTimestamp } from '../utils/helpers'
 import { ButtonCustomId, DISCORD_BASE_API } from '../utils/consts'
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
@@ -87,6 +87,7 @@ export async function bookmarkHandler(c: Context, interaction: APIApplicationCom
     }
     // If message has any attachments
     if (message.attachments.length > 0) {
+        // TODO: handle other attachment types other than images and videos
         const totalAttachments = message.attachments.length
         container.push({
             type: ComponentType.TextDisplay,
@@ -107,6 +108,10 @@ export async function bookmarkHandler(c: Context, interaction: APIApplicationCom
 
     container.push({
         type: ComponentType.Separator,
+    })
+    container.push({
+        type: ComponentType.TextDisplay,
+        content: toUnixTimestamp(message.timestamp, 'R'),
     })
     // If message has embeds mention that (bots can send embeds)
     if (message.embeds.length > 0) {

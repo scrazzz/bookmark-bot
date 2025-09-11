@@ -1,6 +1,16 @@
 import { APIUser } from 'discord-api-types/v10'
 import { DISCORD_BASE_API } from './consts'
 
+export async function deleteMessage(botToken: string, channelId: string, messageId: string) {
+    const resp = await fetch(`${DISCORD_BASE_API}/channels/${channelId}/messages/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bot ${botToken}`,
+        },
+    })
+    return resp.ok
+}
+
 export function createJumpUrl(guildId: string, channelId: string, messageId: string) {
     return `https://discord.com/channels/${guildId}/${channelId}/${messageId}`
 }
@@ -26,12 +36,8 @@ ${content}
 \`\`\``
 }
 
-export async function deleteMessage(botToken: string, channelId: string, messageId: string) {
-    const resp = await fetch(`${DISCORD_BASE_API}/channels/${channelId}/messages/${messageId}`, {
-        method: 'DELETE',
-        headers: {
-            Authorization: `Bot ${botToken}`,
-        },
-    })
-    return resp.ok
+export function toUnixTimestamp(isoTimestamp: string, format: string = 'f') {
+    const date = new Date(isoTimestamp)
+    const ts = Math.floor(date.getTime() / 1000)
+    return `<t:${ts}:${format}>`
 }
