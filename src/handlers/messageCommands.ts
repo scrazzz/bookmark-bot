@@ -22,7 +22,8 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
         return c.json({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                content: 'Are you sure you want to delete this bookmark?\n**This action cannot be undone.**',
+                content:
+                    '- Are you sure you want to delete this bookmark?\n:warning: **This action cannot be undone.**',
                 flags: MessageFlags.Ephemeral,
                 components: [
                     {
@@ -31,7 +32,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                             {
                                 type: ComponentType.Button,
                                 style: ButtonStyle.Danger,
-                                label: 'Yes, DELETE the bookmark from my DMs',
+                                label: 'Yes, DELETE the bookmark',
                                 custom_id: ButtonCustomId.bookmarkDismissConfirm + '-' + interaction.message.id,
                             },
                         ],

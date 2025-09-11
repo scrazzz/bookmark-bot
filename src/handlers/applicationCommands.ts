@@ -77,15 +77,13 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                     components: [
                         {
                             type: ComponentType.TextDisplay,
-                            content: `**From**: ${toCode(formatUsername(message.author))}`,
+                            content: `- From **${toCode(formatUsername(message.author))}** (${toCode(
+                                message.author.id
+                            )}) in **${channel.name ? toCode('#' + channel.name) : 'Your DMs'}**`,
                         },
                         {
                             type: ComponentType.TextDisplay,
-                            content: `**Channel**: ${channel.name ? toCode('#' + channel.name) : 'Your DMs'}`,
-                        },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `**Jump URL**\n${jumpUrl}`,
+                            content: `- ${jumpUrl}`,
                         },
                         {
                             type: ComponentType.Separator,
@@ -93,9 +91,11 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                     ],
                 },
             ]
+            const container = bookmarkComponent[0].components
+
             // If there's any message content
             if (message.content.trim().length > 0) {
-                bookmarkComponent[0]['components'].push({
+                container.push({
                     type: ComponentType.TextDisplay,
                     content: `**Content**\n${message.content}`,
                 })
@@ -103,13 +103,13 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
             // If message has any attachments
             if (message.attachments.length > 0) {
                 const totalAttachments = message.attachments.length
-                bookmarkComponent[0]['components'].push({
+                container.push({
                     type: ComponentType.TextDisplay,
                     content: `**Attachments** ${
                         totalAttachments > 10 ? `\nShowing 10 (${totalAttachments} present)` : `(${totalAttachments})`
                     }`,
                 })
-                bookmarkComponent[0]['components'].push({
+                container.push({
                     type: ComponentType.MediaGallery,
                     items: message.attachments.slice(0, 9).map((attach) => ({
                         media: {
@@ -119,18 +119,22 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                     })),
                 })
             }
-            // If message has embeds (bots can send embeds) mention that
+
+            container.push({
+                type: ComponentType.Separator,
+            })
+            // If message has embeds mention that (bots can send embeds)
             if (message.embeds.length > 0) {
-                bookmarkComponent[0].components.push({
+                container.push({
                     type: ComponentType.TextDisplay,
-                    content: `*-# Original message contains ${message.embeds.length} embeds(s)*`,
+                    content: `-# Original message contains ${message.embeds.length} embeds(s)`,
                 })
             }
             // If the message is from an NSFW channel add a small warning
             if (interaction.channel.type == ChannelType.GuildText && interaction.channel.nsfw) {
-                bookmarkComponent[0].components.push({
+                container.push({
                     type: ComponentType.TextDisplay,
-                    content: '*-# ⚠️ Bookmarked from an NSFW channel*',
+                    content: '-# ⚠️ Bookmarked from an NSFW channel',
                 })
             }
             // Add the Dismiss button
