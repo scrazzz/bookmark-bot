@@ -1,8 +1,8 @@
 import { APIMessageComponentInteraction, ButtonStyle, ComponentType, MessageFlags } from 'discord-api-types/v10'
 import { InteractionResponseType } from 'discord-interactions'
 import { Context } from 'hono'
-import { ButtonCustomId } from '../utils/consts'
-import { deleteMessage } from '../utils/helpers'
+import { ButtonCustomId } from './utils/consts'
+import { deleteMessage } from './utils/helpers'
 
 /**
  * This function handles message components (buttons, modals, etc).
