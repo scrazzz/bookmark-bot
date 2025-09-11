@@ -6,3 +6,12 @@ export enum ButtonCustomId {
     bookmarkDismiss = 'bookmark:dismiss',
     bookmarkDismissConfirm = 'bookmark:dismiss:confirm',
 }
+
+export enum ModalCustomId {
+    configAdd = 'config_add',
+}
+
+export enum TextInputCustomId {
+    configAddName = 'textinput:config_add:name',
+    configAddWebhook = 'textinput:config_add:hook',
+}

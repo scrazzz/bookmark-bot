@@ -21,4 +21,10 @@ app.add({
     type: ApplicationCommandType.Message,
 })
 
+app.add({
+    name: 'config_add',
+    description: 'Configure where you want to save your bookmarks to',
+    type: ApplicationCommandType.ChatInput,
+})
+
 export const APPLICATION_COMMANDS = app.commands

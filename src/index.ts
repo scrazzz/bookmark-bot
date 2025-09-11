@@ -1,10 +1,11 @@
 import { Hono } from 'hono'
 import { APPLICATION_COMMANDS } from './commands'
-import { verifyKey } from 'discord-interactions'
+import { InteractionResponseType, verifyKey } from 'discord-interactions'
 import { APIInteraction, InteractionType } from 'discord-api-types/v10'
 import { applicationCommandHandler } from './appCommandHandler'
 import { messageComponentHandler } from './componentHandler'
 import { DISCORD_BASE_API } from './utils/consts'
+import { modalHandler } from './handlers/modalHandler'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
@@ -28,13 +29,16 @@ app.post('/interactions', async (c) => {
     const interaction = JSON.parse(rawBody) as APIInteraction
     switch (interaction.type) {
         case InteractionType.Ping:
-            return c.json({ type: 1 })
+            return c.json({ type: InteractionResponseType.PONG })
 
         case InteractionType.ApplicationCommand:
             return applicationCommandHandler(c, interaction)
 
         case InteractionType.MessageComponent:
             return messageComponentHandler(c, interaction)
+
+        case InteractionType.ModalSubmit:
+            return modalHandler(c, interaction)
 
         default:
             return c.text('Unhandled interaction type', 400)
