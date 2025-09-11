@@ -13,7 +13,7 @@ import {
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
 import { createJumpUrl, formatUsername, toCode, toCodeblock, toUnixTimestamp } from '../utils/helpers'
-import { ButtonCustomId, DISCORD_BASE_API } from '../utils/consts'
+import { ButtonCustomId, DISCORD_BASE_API, SUPPORTED_MIMES } from '../utils/consts'
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
 
@@ -87,25 +87,41 @@ export async function bookmarkHandler(c: Context, interaction: APIApplicationCom
     }
     // If message has any attachments
     if (message.attachments.length > 0) {
-        // TODO: handle other attachment types other than images and videos
         const totalAttachments = message.attachments.length
         container.push({
             type: ComponentType.TextDisplay,
             content: `**Attachments** ${
-                totalAttachments > 10 ? `\nShowing 10 (${totalAttachments} present)` : `(${totalAttachments})`
+                totalAttachments >= 10 ? `\nShowing 10 (${totalAttachments} present)` : `(${totalAttachments})`
             }`,
         })
-        container.push({
-            type: ComponentType.MediaGallery,
-            items: message.attachments.slice(0, 9).map((attach) => ({
-                media: {
-                    url: attach.proxy_url,
-                },
+        // Push image/video/gif attachments via MediaGallery
+        const mediaAttachments = message.attachments
+            .slice(0, 9)
+            .filter((a) => a.content_type && SUPPORTED_MIMES.includes(a.content_type))
+            .map((a) => ({
+                media: { url: a.proxy_url },
                 spoiler: interaction.channel.type === ChannelType.GuildText ? interaction.channel.nsfw : false,
-            })),
-        })
+            }))
+        if (mediaAttachments.length) {
+            container.push({
+                type: ComponentType.MediaGallery,
+                items: mediaAttachments,
+            })
+        }
+        // Just mention the url for other attachments
+        const otherAttachments = message.attachments
+            .filter((a) => a.content_type && !SUPPORTED_MIMES.includes(a.content_type))
+            .map((a) => `[${a.filename}](${a.proxy_url})`)
+            .join('\n')
+        if (otherAttachments.length) {
+            container.push({
+                type: ComponentType.TextDisplay,
+                content: otherAttachments,
+            })
+        }
     }
 
+    // message timestamp
     container.push({
         type: ComponentType.Separator,
     })
