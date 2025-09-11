@@ -5,15 +5,15 @@ import { ButtonCustomId } from './utils/consts'
 import { deleteMessage } from './utils/helpers'
 
 /**
- * This function handles message components (buttons, modals, etc).
- * Currently we only handle the button component (triggered when user clicks a button) because that's what this bot mainly interacts with.
+ * This function handles message components (buttons etc).
  *
  * The `custom_id` (defined as "const interactionId") is used to check what component the user interacted with.
- * Every component has a `custom_id` that should be defined (I think)?...
+ * Every component has a `custom_id`
  *
  * Currently we have the following cases:
  *   1. User clicks the "Dismiss" button below the bookmarked message from the bot's DM
  *   2. User clicks the "DELETE" confirmation button that was sent in (step 1.)
+ *
  */
 export async function messageComponentHandler(c: Context, interaction: APIMessageComponentInteraction) {
     const interactionId = interaction.data.custom_id
