@@ -71,11 +71,11 @@ If the deployment is successful:
 ## Project structre
 - `src/index.ts` - Main entry point. All the routes and main logic is here.
 - `src/commands.ts` - All the commands are defined here.
+- `appCommandHandler.ts` - Main interaction handler for application commands.
+- `componentHandler.ts` - Main handler for message components.
 - `src/utils/` - Utility functions to make life easier and to avoid repeating code.
 - `src/handlers/`
-  - `applicationCommand.ts` - Main interaction handler for app commands.
-  - `messageCommands.ts` - Main interaction handler for message commands.
-  - `commands/` - Directory to seperate interaction logic to not clutter applicationCommand.ts / messageCommands.ts
+  - `bookmark.ts` - Handles the 'Bookmark Message to DMs' message command
 
 ## License
 This project is licensed under the [GNU Affero General Public License v3.0](./LICENSE).
