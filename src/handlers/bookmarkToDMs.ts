@@ -115,7 +115,7 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
     return bookmarkComponent
 }
 
-export async function bookmarkHandler(c: Context, interaction: APIApplicationCommandInteraction) {
+export async function bookmarkToDMsHandler(c: Context, interaction: APIApplicationCommandInteraction) {
     const data = interaction.data as APIMessageApplicationCommandInteractionData
     const interactionAuthorId = interaction.member ? interaction.member.user.id : interaction.user?.id! // user.id should not be undefined here (hopefully)
 

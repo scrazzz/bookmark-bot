@@ -3,7 +3,7 @@ import { Context } from 'hono'
 import { getInteractionAuthor, toCode } from '../utils/helpers'
 import { getWebhook } from '../utils/kv/workersKV'
 import { BOT_WEBHOOK_AVATAR, DISCORD_WEBHOOK_BASE } from '../utils/consts'
-import { createBookmarkedComponent } from './bookmark'
+import { createBookmarkedComponent } from './bookmarkToDMs'
 
 export async function bookmarkToWebhookHandler(c: Context, interaction: APIApplicationCommandInteraction) {
     const interactionAuthor = getInteractionAuthor(interaction)

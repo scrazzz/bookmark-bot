@@ -1,15 +1,6 @@
-import {
-    APIApplicationCommandInteraction,
-    ButtonStyle,
-    ComponentType,
-    InteractionResponseType,
-    MessageFlags,
-} from 'discord-api-types/v10'
+import { APIApplicationCommandInteraction, InteractionResponseType } from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { bookmarkHandler, createBookmarkedComponent } from './handlers/bookmark'
-import { BOT_WEBHOOK_AVATAR, ButtonCustomId, DISCORD_WEBHOOK_BASE } from './utils/consts'
-import { getInteractionAuthor, toCode } from './utils/helpers'
-import { getWebhook } from './utils/kv/workersKV'
+import { bookmarkToDMsHandler } from './handlers/bookmarkToDMs'
 import { bookmarkToWebhookHandler } from './handlers/bookmarkToWebhook'
 import { configHandler } from './handlers/config'
 
@@ -32,8 +23,8 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
         }
 
         // Main Bot Commands
-        case 'Bookmark Message to DMs': {
-            return await bookmarkHandler(c, interaction)
+        case 'Bookmark to DMs': {
+            return await bookmarkToDMsHandler(c, interaction)
         }
 
         case 'config': {

@@ -17,7 +17,7 @@ app.add({
 })
 
 app.add({
-    name: 'Bookmark Message to DMs',
+    name: 'Bookmark to DMs',
     type: ApplicationCommandType.Message,
 })
 
