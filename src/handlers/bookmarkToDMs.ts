@@ -16,6 +16,7 @@ import { createJumpUrl, formatUsername, toCode, toCodeblock, toUnixTimestamp } f
 import { ButtonCustomId, DISCORD_BASE_API, SUPPORTED_MIMES } from '../utils/consts'
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
+const POSSIBLE_NSFW_CHANNELS = [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
 
 export function createBookmarkedComponent(interaction: APIApplicationCommandInteraction) {
     const data = interaction.data as APIMessageApplicationCommandInteractionData
@@ -23,6 +24,7 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
     const guildId = interaction.guild?.id ?? '@me' // will be in DMs if this cmd is not used in a guild
     const message = data.resolved.messages[messageId]
     const jumpUrl = createJumpUrl(guildId, interaction.channel.id, messageId)
+    const isNsfwChannel = POSSIBLE_NSFW_CHANNELS.includes(interaction.channel.type)
 
     const bookmarkComponent: [APIContainerComponent, APIMessageTopLevelComponent?] = [
         {
@@ -68,7 +70,7 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
             .filter((a) => a.content_type && SUPPORTED_MIMES.includes(a.content_type))
             .map((a) => ({
                 media: { url: a.proxy_url },
-                spoiler: interaction.channel.type === ChannelType.GuildText ? interaction.channel.nsfw : false,
+                spoiler: isNsfwChannel,
             }))
         if (mediaAttachments.length) {
             container.push({
@@ -97,15 +99,15 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
         type: ComponentType.TextDisplay,
         content: toUnixTimestamp(message.timestamp, 'R'),
     })
-    // If message has embeds mention that (bots can send embeds)
+    // If message has any embeds mention that
     if (message.embeds.length > 0) {
         container.push({
             type: ComponentType.TextDisplay,
             content: `-# Original message contains ${message.embeds.length} embed(s)`,
         })
     }
-    // If the message is from an NSFW channel add a small warning
-    if (interaction.channel.type == ChannelType.GuildText && interaction.channel.nsfw) {
+    // If message is from an NSFW channel display a warning
+    if (isNsfwChannel) {
         container.push({
             type: ComponentType.TextDisplay,
             content: '-# ⚠️ Bookmarked from an NSFW channel',
@@ -159,8 +161,8 @@ export async function bookmarkToDMsHandler(c: Context, interaction: APIApplicati
         components: [
             {
                 type: ComponentType.Button,
-                custom_id: ButtonCustomId.bookmarkDismiss,
-                label: 'Dismiss',
+                custom_id: ButtonCustomId.bookmarkDelete,
+                label: 'Delete',
                 style: ButtonStyle.Danger,
             },
         ],
