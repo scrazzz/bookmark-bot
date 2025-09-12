@@ -20,8 +20,8 @@ export const SUPPORTED_MIMES: string[] = [
 ]
 
 export enum ButtonCustomId {
-    bookmarkDismiss = 'bookmark:dismiss',
-    bookmarkDismissConfirm = 'bookmark:dismiss:confirm',
+    bookmarkDelete = 'bookmark:dismiss',
+    bookmarkDeleteConfirm = 'bookmark:dismiss:confirm',
 
     configAdd = 'btn:config:add',
     configRemove = 'btn:config:remove',

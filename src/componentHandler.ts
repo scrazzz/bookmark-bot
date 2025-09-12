@@ -22,11 +22,11 @@ import { deleteWebhook, getWebhook } from './utils/kv/workersKV'
 export async function messageComponentHandler(c: Context, interaction: APIMessageComponentInteraction) {
     const interactionId = interaction.data.custom_id
 
-    if (interactionId === ButtonCustomId.bookmarkDismiss) {
+    if (interactionId === ButtonCustomId.bookmarkDelete) {
         return c.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: '⚠️ Are you sure you want to delete this bookmark?\n- **This action cannot be undone.**',
+                content: '⚠️ Are you sure you want to delete this bookmark?\n- **This action cannot be undone**',
                 flags: MessageFlags.Ephemeral,
                 components: [
                     {
@@ -36,7 +36,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                                 type: ComponentType.Button,
                                 style: ButtonStyle.Danger,
                                 label: 'Yes, DELETE the bookmark',
-                                custom_id: ButtonCustomId.bookmarkDismissConfirm + '-' + interaction.message.id,
+                                custom_id: ButtonCustomId.bookmarkDeleteConfirm + '-' + interaction.message.id,
                             },
                         ],
                     },
@@ -45,7 +45,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
         })
     }
 
-    if (interactionId.startsWith(ButtonCustomId.bookmarkDismissConfirm)) {
+    if (interactionId.startsWith(ButtonCustomId.bookmarkDeleteConfirm)) {
         const bookmarkMessageId = interaction.data.custom_id.split('-')[1]
         // Delete the bookmarked message
         // interaction.channel.id will be the DMChannel with the bot/app
