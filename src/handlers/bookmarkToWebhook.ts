@@ -12,9 +12,7 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
         return c.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: `❌ You have not configured a webhook channel to bookmark messages. Set it using ${toCode(
-                    '/config'
-                )}`,
+                content: `❌ You have not configured a webhook to bookmark messages. Set it using ${toCode('/config')}`,
                 flags: MessageFlags.Ephemeral,
             },
         })

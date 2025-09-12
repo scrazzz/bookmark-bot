@@ -26,8 +26,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
         return c.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content:
-                    '- Are you sure you want to delete this bookmark?\n:warning: **This action cannot be undone.**',
+                content: '⚠️ Are you sure you want to delete this bookmark?\n- **This action cannot be undone.**',
                 flags: MessageFlags.Ephemeral,
                 components: [
                     {

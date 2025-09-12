@@ -101,7 +101,7 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
     if (message.embeds.length > 0) {
         container.push({
             type: ComponentType.TextDisplay,
-            content: `-# Original message contains ${message.embeds.length} embeds(s)`,
+            content: `-# Original message contains ${message.embeds.length} embed(s)`,
         })
     }
     // If the message is from an NSFW channel add a small warning
