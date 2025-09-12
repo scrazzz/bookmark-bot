@@ -1,8 +1,16 @@
-import { APIMessageComponentInteraction, ButtonStyle, ComponentType, MessageFlags } from 'discord-api-types/v10'
-import { InteractionResponseType } from 'discord-interactions'
+import {
+    APIMessageComponentInteraction,
+    APIModalInteractionResponseCallbackData,
+    ButtonStyle,
+    ComponentType,
+    InteractionResponseType,
+    MessageFlags,
+    TextInputStyle,
+} from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { ButtonCustomId } from './utils/consts'
-import { deleteMessage } from './utils/helpers'
+import { ButtonCustomId, ModalCustomId, TextInputCustomId } from './utils/consts'
+import { deleteMessage, getInteractionAuthor, toCode } from './utils/helpers'
+import { deleteWebhook, getWebhook } from './utils/kv/workersKV'
 
 /**
  * This function handles message components (buttons etc).
@@ -10,17 +18,13 @@ import { deleteMessage } from './utils/helpers'
  * The `custom_id` (defined as "const interactionId") is used to check what component the user interacted with.
  * Every component has a `custom_id`
  *
- * Currently we have the following cases:
- *   1. User clicks the "Dismiss" button below the bookmarked message from the bot's DM
- *   2. User clicks the "DELETE" confirmation button that was sent in (step 1.)
- *
  */
 export async function messageComponentHandler(c: Context, interaction: APIMessageComponentInteraction) {
     const interactionId = interaction.data.custom_id
 
     if (interactionId === ButtonCustomId.bookmarkDismiss) {
         return c.json({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: InteractionResponseType.ChannelMessageWithSource,
             data: {
                 content:
                     '- Are you sure you want to delete this bookmark?\n:warning: **This action cannot be undone.**',
@@ -48,9 +52,77 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
         // interaction.channel.id will be the DMChannel with the bot/app
         await deleteMessage(c.env.DISCORD_BOT_TOKEN, interaction.channel.id, bookmarkMessageId)
         return c.json({
-            type: InteractionResponseType.UPDATE_MESSAGE,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 content: 'Deleted!',
+                flags: MessageFlags.Ephemeral,
+                components: [],
+            },
+        })
+    }
+
+    if (interactionId === ButtonCustomId.configAdd) {
+        const modal: APIModalInteractionResponseCallbackData = {
+            title: 'Bookmark Config',
+            custom_id: ModalCustomId.configAdd,
+            components: [
+                {
+                    type: ComponentType.TextDisplay,
+                    content: `### Add an easy to remember ${toCode('Name')} that maps to a ${toCode(
+                        'Webhook URL'
+                    )} to save your bookmarks.`,
+                },
+                {
+                    type: ComponentType.Label,
+                    label: 'Name',
+                    description: 'Example: "Todo", "Important stuff", etc.',
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: TextInputCustomId.configAddName,
+                        style: TextInputStyle.Short,
+                        min_length: 3,
+                        max_length: 40,
+                    },
+                },
+                {
+                    type: ComponentType.Label,
+                    label: 'Webhook URL',
+                    description: 'Enter a valid Discord Webhook URL.',
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: TextInputCustomId.configAddWebhook,
+                        style: TextInputStyle.Short,
+                        min_length: 115, // 118
+                    },
+                },
+            ],
+        }
+        return c.json({
+            type: InteractionResponseType.Modal,
+            data: modal,
+        })
+    }
+
+    if (interactionId === ButtonCustomId.configRemove) {
+        const interactionAuthor = getInteractionAuthor(interaction)
+        const config = await getWebhook(c, interactionAuthor.id)
+        if (config === null) {
+            return c.json({
+                type: InteractionResponseType.UpdateMessage,
+                data: {
+                    content:
+                        '❌ There is no config to remove since you have not setup one. Add new config below where you can set a webhook to bookmark messages to',
+                    flags: MessageFlags.Ephemeral,
+                },
+            })
+        }
+
+        // Delete the configured webhook
+        await deleteWebhook(c, interactionAuthor.id)
+        return c.json({
+            type: InteractionResponseType.UpdateMessage,
+            data: {
+                content: `✅ Deleted configured webhook (${config.name})`,
                 flags: MessageFlags.Ephemeral,
                 components: [],
             },

@@ -17,45 +17,13 @@ import { ButtonCustomId, DISCORD_BASE_API, SUPPORTED_MIMES } from '../utils/cons
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
 
-export async function bookmarkHandler(c: Context, interaction: APIApplicationCommandInteraction) {
+export function createBookmarkedComponent(interaction: APIApplicationCommandInteraction) {
     const data = interaction.data as APIMessageApplicationCommandInteractionData
-    const interactionAuthorId = interaction.member ? interaction.member.user.id : interaction.user?.id! // user.id should not be undefined here (hopefully)
-
-    const guildId = interaction.guild?.id ?? '@me' // will be in DMs if this cmd is not used in a guild
-    const channel = interaction.channel
     const messageId = data.target_id
-    const jumpUrl = createJumpUrl(guildId, channel.id, messageId)
+    const guildId = interaction.guild?.id ?? '@me' // will be in DMs if this cmd is not used in a guild
     const message = data.resolved.messages[messageId]
+    const jumpUrl = createJumpUrl(guildId, interaction.channel.id, messageId)
 
-    // To "Bookmark" this message to DMs, the app needs to create a DM channel with the interaction author first.
-    const DMChannelResp = await fetch(CREATE_DM_ENDPOINT, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bot ${c.env.DISCORD_BOT_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            recipient_id: interactionAuthorId,
-        }),
-    })
-    if (!DMChannelResp.ok) {
-        // Failed to create a DM Channel for some reason?
-        const err = await DMChannelResp.json()
-        return c.json({
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: `❌ Failed to create a DM Channel with you (this is required for bookmark functionality): ${toCodeblock(
-                    JSON.stringify(err, null, 2)
-                )}`,
-                flags: MessageFlags.Ephemeral,
-            },
-        })
-    }
-    const DMChannel = (await DMChannelResp.json()) as APIDMChannel
-
-    // Now send the message to bookmark to the created DM Channel
-    // But first we need to format the Bookmark message to send in DMs using Components
-    // TODO: fix this weird typehint?
     const bookmarkComponent: [APIContainerComponent, APIMessageTopLevelComponent?] = [
         {
             type: ComponentType.Container,
@@ -64,7 +32,7 @@ export async function bookmarkHandler(c: Context, interaction: APIApplicationCom
                     type: ComponentType.TextDisplay,
                     content: `- From **${toCode(formatUsername(message.author))}** (${toCode(
                         message.author.id
-                    )}) in **${channel.name ? toCode('#' + channel.name) : 'Your DMs'}**`,
+                    )}) in **${interaction.channel.name ? toCode('#' + interaction.channel.name) : 'Your DMs'}**`,
                 },
                 {
                     type: ComponentType.TextDisplay,
@@ -143,6 +111,48 @@ export async function bookmarkHandler(c: Context, interaction: APIApplicationCom
             content: '-# ⚠️ Bookmarked from an NSFW channel',
         })
     }
+
+    return bookmarkComponent
+}
+
+export async function bookmarkHandler(c: Context, interaction: APIApplicationCommandInteraction) {
+    const data = interaction.data as APIMessageApplicationCommandInteractionData
+    const interactionAuthorId = interaction.member ? interaction.member.user.id : interaction.user?.id! // user.id should not be undefined here (hopefully)
+
+    const guildId = interaction.guild?.id ?? '@me' // will be in DMs if this cmd is not used in a guild
+    const channel = interaction.channel
+    const messageId = data.target_id
+    const jumpUrl = createJumpUrl(guildId, channel.id, messageId)
+
+    // To "Bookmark" this message to DMs, the app needs to create a DM channel with the interaction author first.
+    const DMChannelResp = await fetch(CREATE_DM_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bot ${c.env.DISCORD_BOT_TOKEN}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            recipient_id: interactionAuthorId,
+        }),
+    })
+    if (!DMChannelResp.ok) {
+        // Failed to create a DM Channel for some reason?
+        const err = await DMChannelResp.json()
+        return c.json({
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: `❌ Failed to create a DM Channel with you (this is required for bookmark functionality): ${toCodeblock(
+                    JSON.stringify(err, null, 2)
+                )}`,
+                flags: MessageFlags.Ephemeral,
+            },
+        })
+    }
+    const DMChannel = (await DMChannelResp.json()) as APIDMChannel
+
+    // Now send the message to bookmark to the created DM Channel
+    // But first we need to format the Bookmark message to send in DMs using Components
+    const bookmarkComponent = createBookmarkedComponent(interaction)
     // Add the Dismiss button
     bookmarkComponent.push({
         type: ComponentType.ActionRow,

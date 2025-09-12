@@ -2,10 +2,10 @@ import { Hono } from 'hono'
 import { APPLICATION_COMMANDS } from './commands'
 import { InteractionResponseType, verifyKey } from 'discord-interactions'
 import { APIInteraction, InteractionType } from 'discord-api-types/v10'
-import { applicationCommandHandler } from './appCommandHandler'
+import { applicationCommandHandler } from './commandHandler'
 import { messageComponentHandler } from './componentHandler'
 import { DISCORD_BASE_API } from './utils/consts'
-import { modalHandler } from './handlers/modalHandler'
+import { modalHandler } from './modalHandler'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 

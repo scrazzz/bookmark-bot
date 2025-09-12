@@ -22,9 +22,14 @@ app.add({
 })
 
 app.add({
-    name: 'config_add',
-    description: 'Configure where you want to save your bookmarks to',
+    name: 'config',
+    description: 'Config where you want to save your bookmarks to',
     type: ApplicationCommandType.ChatInput,
+})
+
+app.add({
+    name: 'Bookmark to Webhook',
+    type: ApplicationCommandType.Message,
 })
 
 export const APPLICATION_COMMANDS = app.commands
