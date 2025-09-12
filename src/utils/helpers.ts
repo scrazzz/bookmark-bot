@@ -1,4 +1,4 @@
-import { APIUser } from 'discord-api-types/v10'
+import { APIApplicationCommandInteraction, APIMessageComponentInteraction, APIUser } from 'discord-api-types/v10'
 import { DISCORD_BASE_API } from './consts'
 
 export async function deleteMessage(botToken: string, channelId: string, messageId: string) {
@@ -26,7 +26,7 @@ export function formatUsername(user: APIUser, mention: boolean = false) {
     return `@${user.username}`
 }
 
-export function toCode(content: string) {
+export function toCode<T>(content: T) {
     return '`' + content + '`'
 }
 
@@ -40,4 +40,8 @@ export function toUnixTimestamp(isoTimestamp: string, format: string = 'f') {
     const date = new Date(isoTimestamp)
     const ts = Math.floor(date.getTime() / 1000)
     return `<t:${ts}:${format}>`
+}
+
+export function getInteractionAuthor(interaction: APIApplicationCommandInteraction | APIMessageComponentInteraction) {
+    return interaction.member ? interaction.member.user : interaction.user!
 }

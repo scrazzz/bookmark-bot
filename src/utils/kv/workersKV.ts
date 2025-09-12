@@ -1,10 +1,8 @@
 import { Context } from 'hono'
 
 export interface BookmarkConfig {
-    hooks: {
-        name: string
-        url: string
-    }[]
+    name: string
+    url: string
 }
 
 export async function getWebhook(c: Context, userId: string) {
@@ -18,4 +16,9 @@ export async function getWebhook(c: Context, userId: string) {
 export async function setWebhook(c: Context, userId: string, config: BookmarkConfig) {
     const resp = ((await c.env.KV_BOOKMARK_CONFIG) as KVNamespace).put(userId, JSON.stringify(config))
     return resp
+}
+
+export async function deleteWebhook(c: Context, userId: string) {
+    const kv = c.env.KV_BOOKMARK_CONFIG as KVNamespace
+    await kv.delete(userId)
 }
