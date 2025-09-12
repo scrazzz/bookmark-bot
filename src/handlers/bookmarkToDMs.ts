@@ -1,5 +1,6 @@
 import {
     APIApplicationCommandInteraction,
+    APIChannel,
     APIContainerComponent,
     APIDMChannel,
     APIMessage,
@@ -16,7 +17,15 @@ import { createJumpUrl, formatUsername, toCode, toCodeblock, toUnixTimestamp } f
 import { ButtonCustomId, DISCORD_BASE_API, SUPPORTED_MIMES } from '../utils/consts'
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
-const POSSIBLE_NSFW_CHANNELS = [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+
+// prettier-ignore
+function isNsfwChannelType(channel: Partial<APIChannel> & Pick<APIChannel, 'id' | 'type'>) {
+    return (
+        channel.type === ChannelType.GuildText ||
+        channel.type === ChannelType.PublicThread ||
+        channel.type === ChannelType.PrivateThread
+    ) && !!channel.nsfw
+}
 
 export function createBookmarkedComponent(interaction: APIApplicationCommandInteraction) {
     const data = interaction.data as APIMessageApplicationCommandInteractionData
@@ -24,7 +33,7 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
     const guildId = interaction.guild?.id ?? '@me' // will be in DMs if this cmd is not used in a guild
     const message = data.resolved.messages[messageId]
     const jumpUrl = createJumpUrl(guildId, interaction.channel.id, messageId)
-    const isNsfwChannel = POSSIBLE_NSFW_CHANNELS.includes(interaction.channel.type)
+    const isNsfwChannel = isNsfwChannelType(interaction.channel)
 
     const bookmarkComponent: [APIContainerComponent, APIMessageTopLevelComponent?] = [
         {
@@ -155,7 +164,8 @@ export async function bookmarkToDMsHandler(c: Context, interaction: APIApplicati
     // Now send the message to bookmark to the created DM Channel
     // But first we need to format the Bookmark message to send in DMs using Components
     const bookmarkComponent = createBookmarkedComponent(interaction)
-    // Add the Dismiss button
+
+    // Add the Dismiss and Go to original message buttons
     bookmarkComponent.push({
         type: ComponentType.ActionRow,
         components: [
@@ -164,6 +174,12 @@ export async function bookmarkToDMsHandler(c: Context, interaction: APIApplicati
                 custom_id: ButtonCustomId.bookmarkDelete,
                 label: 'Delete',
                 style: ButtonStyle.Danger,
+            },
+            {
+                type: ComponentType.Button,
+                style: ButtonStyle.Link,
+                url: jumpUrl,
+                label: 'Go to original message',
             },
         ],
     })
