@@ -43,7 +43,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             return c.json({
                 type: InteractionResponseType.UpdateMessage,
                 data: {
-                    content: `❌ You have already set 1 webhook "${config.name}". You cannot add another one.`,
+                    content: `❌ You have already configured a webhook ("${config.name}").`,
                     components: [],
                 },
             })
@@ -57,7 +57,6 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
         return c.json({
             type: InteractionResponseType.UpdateMessage,
             data: {
-                // content: `name: ${name}\nwebhook: ${hook}`,
                 content: `✅ Added new bookmark config (**${name}**).\n- Use the message command "**${toCode(
                     'Bookmark to Webhook'
                 )}**" to bookmark a message to your set webhook!`,

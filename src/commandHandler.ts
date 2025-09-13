@@ -50,13 +50,13 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
             })
         }
 
-        // Main Bot Commands
-        case 'Bookmark to DMs': {
-            return await bookmarkToDMsHandler(c, interaction)
-        }
-
         case 'config': {
             return configHandler(c, interaction)
+        }
+
+        // Main commands
+        case 'Bookmark to DMs': {
+            return await bookmarkToDMsHandler(c, interaction)
         }
 
         case 'Bookmark to Webhook': {
