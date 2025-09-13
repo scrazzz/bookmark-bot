@@ -5,6 +5,7 @@ export async function deleteMessage(botToken: string, channelId: string, message
     const resp = await fetch(`${DISCORD_BASE_API}/channels/${channelId}/messages/${messageId}`, {
         method: 'DELETE',
         headers: {
+            'User-Agent': `BookmarkBot (https://github.com/scrazzz/bookmark-bot)`,
             Authorization: `Bot ${botToken}`,
         },
     })

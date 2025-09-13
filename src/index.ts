@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { APPLICATION_COMMANDS } from './commands'
 import { InteractionResponseType, verifyKey } from 'discord-interactions'
-import { APIInteraction, InteractionType } from 'discord-api-types/v10'
+import { APIApplicationCommand, APIInteraction, InteractionType } from 'discord-api-types/v10'
 import { applicationCommandHandler } from './commandHandler'
 import { messageComponentHandler } from './componentHandler'
 import { DISCORD_BASE_API } from './utils/consts'
@@ -49,6 +49,7 @@ app.post('/interactions', async (c) => {
 app.get('/register', async (c) => {
     const resp = await fetch(`${DISCORD_BASE_API}/applications/${c.env.DISCORD_APPLICATION_ID}/commands`, {
         headers: {
+            'User-Agent': 'BookmarkBot (https://github.com/scrazzz/bookmark-bot)',
             'Content-Type': 'application/json',
             Authorization: `Bot ${c.env.DISCORD_BOT_TOKEN}`,
         },
@@ -56,16 +57,23 @@ app.get('/register', async (c) => {
         body: JSON.stringify(APPLICATION_COMMANDS),
     })
     if (resp.ok) {
+        const cmds = (await resp.json()) as Array<APIApplicationCommand>
         return c.json({
             status: resp.status,
             message: 'Registered all commands',
-            cmds: await resp.json(),
+            cmds: cmds.map((c) => ({ name: c.name, desc: c.description, type: c.type })),
         })
     } else {
         c.status(400)
+        let err = undefined
+        if (resp.headers.get('Content-Type') === 'application/json') {
+            err = await resp.json()
+        } else {
+            err = await resp.text()
+        }
         return c.json({
             status: resp.status,
-            message: await resp.json(),
+            message: err,
         })
     }
 })
