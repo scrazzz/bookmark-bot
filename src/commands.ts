@@ -10,6 +10,7 @@ class GlobalCommands {
 
 const app = new GlobalCommands()
 
+// slash commands
 app.add({
     name: 'hello',
     description: 'hello vro <3',
@@ -17,14 +18,21 @@ app.add({
 })
 
 app.add({
-    name: 'Bookmark to DMs',
-    type: ApplicationCommandType.Message,
-})
-
-app.add({
     name: 'config',
     description: 'Config where you want to save your bookmarks to',
     type: ApplicationCommandType.ChatInput,
+})
+
+app.add({
+    name: 'aboutme',
+    description: 'About Bookmark Bot',
+    type: ApplicationCommandType.ChatInput,
+})
+
+// Message commands
+app.add({
+    name: 'Bookmark to DMs',
+    type: ApplicationCommandType.Message,
 })
 
 app.add({
