@@ -75,15 +75,15 @@ If the deployment is successful:
 ## Project structre
 ```gql
 src
-├── commandHandler.ts    - Main interaction handler for all commands
-├── commands.ts          - All the commands are defined here
-├── componentHandler.ts  - Handler for all message components (buttons)
-├── modalHandler.ts      - Handler for all modals
+├── index.ts             # Main entry point
+├── commandHandler.ts    # Main interaction handler for all commands
+├── commands.ts          # All the commands are defined here
+├── componentHandler.ts  # Handler for all message components (buttons)
+├── modalHandler.ts      # Handler for all modals
 ├── handlers
 │   ├── bookmarkToDMs.ts
 │   ├── bookmarkToWebhook.ts
 │   └── config.ts
-├── index.ts             - Main entry point
 └── utils
     ├── consts.ts
     ├── helpers.ts
