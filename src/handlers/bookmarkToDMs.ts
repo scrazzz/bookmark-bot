@@ -18,13 +18,8 @@ import { ButtonCustomId, DISCORD_BASE_API, SUPPORTED_MIMES } from '../utils/cons
 
 const CREATE_DM_ENDPOINT = `${DISCORD_BASE_API}/users/@me/channels`
 
-// prettier-ignore
-function isNsfwChannelType(channel: Partial<APIChannel> & Pick<APIChannel, 'id' | 'type'>) {
-    return (
-        channel.type === ChannelType.GuildText ||
-        channel.type === ChannelType.PublicThread ||
-        channel.type === ChannelType.PrivateThread
-    ) && !!channel.nsfw
+function isNsfwChannelType(channel: Partial<APIChannel>) {
+    return 'nsfw' in channel && channel.nsfw
 }
 
 export function createBookmarkedComponent(interaction: APIApplicationCommandInteraction) {
