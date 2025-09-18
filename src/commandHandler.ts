@@ -40,7 +40,7 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
                                 {
                                     type: ComponentType.Button,
                                     style: ButtonStyle.Link,
-                                    label: 'Install app',
+                                    label: 'Add Bot',
                                     url: BOT_INSTALL_URL,
                                 },
                             ],
