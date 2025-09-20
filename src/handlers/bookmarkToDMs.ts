@@ -131,7 +131,6 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
                     items: mediaAttachments,
                 })
             }
-            // Just mention the url for other attachments
             const otherAttachments = messgeSnapshot.attachments
                 .filter((a) => a.content_type && !SUPPORTED_MIMES.includes(a.content_type))
                 .map((a) => `[${a.filename}](${a.proxy_url})`)
