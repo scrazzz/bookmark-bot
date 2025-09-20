@@ -1,5 +1,6 @@
 export const DISCORD_BASE_API = 'https://discord.com/api/v10'
 export const DISCORD_WEBHOOK_BASE = 'https://discord.com/api/webhooks'
+export const DISCORD_IMAGE_BASE = 'https://cdn.discordapp.com'
 
 export const BOT_WEBHOOK_AVATAR =
     'https://cdn.discordapp.com/attachments/927944825016311858/1415945657113645086/bookmark_bot_webhook.png'
