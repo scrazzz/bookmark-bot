@@ -1,4 +1,9 @@
-import { ApplicationCommandType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import {
+    ApplicationCommandType,
+    ApplicationIntegrationType,
+    InteractionContextType,
+    RESTPostAPIApplicationCommandsJSONBody,
+} from 'discord-api-types/v10'
 
 class GlobalCommands {
     commands: RESTPostAPIApplicationCommandsJSONBody[] = []
@@ -33,6 +38,8 @@ app.add({
 app.add({
     name: 'Bookmark to DMs',
     type: ApplicationCommandType.Message,
+    contexts: [InteractionContextType.Guild, InteractionContextType.PrivateChannel],
+    integration_types: [ApplicationIntegrationType.GuildInstall, ApplicationIntegrationType.UserInstall],
 })
 
 app.add({
