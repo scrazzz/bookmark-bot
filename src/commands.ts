@@ -32,6 +32,8 @@ app.add({
     name: 'aboutme',
     description: 'About Bookmark Bot',
     type: ApplicationCommandType.ChatInput,
+    contexts: [InteractionContextType.Guild, InteractionContextType.PrivateChannel],
+    integration_types: [ApplicationIntegrationType.UserInstall],
 })
 
 // Message commands
