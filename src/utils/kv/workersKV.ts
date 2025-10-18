@@ -1,8 +1,12 @@
 import { Context } from 'hono'
 
 export interface BookmarkConfig {
+    // The user-inputted name for the webhook
     name: string
+    // The webhook URL
     url: string
+    // Guild ID of the webhook to construct the message URL
+    guildId?: string
 }
 
 export async function getWebhook(c: Context, userId: string) {

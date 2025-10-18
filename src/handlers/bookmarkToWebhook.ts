@@ -1,4 +1,10 @@
-import { APIApplicationCommandInteraction, InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
+import {
+    APIApplicationCommandInteraction,
+    APIMessage,
+    APIWebhook,
+    InteractionResponseType,
+    MessageFlags,
+} from 'discord-api-types/v10'
 import { Context } from 'hono'
 import { getInteractionAuthor, toCode } from '../utils/helpers'
 import { getWebhook } from '../utils/kv/workersKV'
@@ -18,10 +24,23 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
         })
     }
 
-    const webhookURL = `${DISCORD_WEBHOOK_BASE}/${config.url}?with_components=true&wait=true`
+    const webhook = `${DISCORD_WEBHOOK_BASE}/${config.url}?with_components=true&wait=true`
     const bookmarkComponent = createBookmarkedComponent(interaction)
+    let webhookGuildId = config.guildId
 
-    const webhookResp = await fetch(webhookURL, {
+    if (webhookGuildId === undefined) {
+        // Set the Guild ID for this webhook in KV so we don't have to make additional API requests later.
+        // webhookGuildId is used to create the message URL so that the user can easily find the webhook after bookmarking.
+        const hook = await fetch(webhook)
+        if (hook.status === 200) {
+            const js: APIWebhook = await hook.json()
+            // TODO: Look up why this can be undefined from API
+            // I'm 99.9% sure the guild ID will be present here
+            webhookGuildId = js.guild_id!
+        }
+    }
+
+    const webhookPostResp = await fetch(webhook, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -33,23 +52,26 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
             flags: MessageFlags.IsComponentsV2,
         }),
     })
-    if (!webhookResp.ok) {
-        // Sending the webhook failed, inform the user about it
+
+    if (webhookPostResp.ok) {
+        const js: APIMessage = await webhookPostResp.json()
+        const messageUrl = `https://discord.com/channels/${webhookGuildId}/${js.channel_id}/${js.id}`
         return c.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: `❌ Failed to bookmark this message to your configured webhook (${config.name}): ${toCode(
-                    webhookResp.status + webhookResp.statusText
-                )}`,
+                content: `✅ Bookmarked message to your configured [webhook](${messageUrl}) channel (${config.name})`,
                 flags: MessageFlags.Ephemeral,
             },
         })
     }
 
+    // Sending the webhook failed, inform the user about it
     return c.json({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            content: `✅ Bookmarked message to your configured webhook (${config.name})`,
+            content: `❌ Failed to bookmark this message to your configured webhook (${config.name}): ${toCode(
+                webhookPostResp.status + webhookPostResp.statusText
+            )}`,
             flags: MessageFlags.Ephemeral,
         },
     })
