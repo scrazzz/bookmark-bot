@@ -28,6 +28,7 @@ export enum ButtonCustomId {
 
     configAdd = 'btn:config:add',
     configRemove = 'btn:config:remove',
+    configView = 'btn:config:view',
 }
 
 export enum ModalCustomId {

@@ -29,6 +29,12 @@ export function configHandler(c: Context, interaction: APIApplicationCommandInte
                             style: ButtonStyle.Danger,
                             custom_id: ButtonCustomId.configRemove,
                         },
+                        {
+                            type: ComponentType.Button,
+                            label: 'View current config',
+                            style: ButtonStyle.Primary,
+                            custom_id: 'btn:config:view',
+                        },
                     ],
                 },
             ],

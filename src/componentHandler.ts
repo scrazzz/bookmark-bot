@@ -8,7 +8,7 @@ import {
     TextInputStyle,
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { ButtonCustomId, ModalCustomId, TextInputCustomId } from './utils/consts'
+import { ButtonCustomId, DISCORD_WEBHOOK_BASE, ModalCustomId, TextInputCustomId } from './utils/consts'
 import { deleteMessage, getInteractionAuthor, toCode } from './utils/helpers'
 import { deleteWebhook, getWebhook } from './utils/kv/workersKV'
 
@@ -67,14 +67,14 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
             components: [
                 {
                     type: ComponentType.TextDisplay,
-                    content: `### Add an easy to remember ${toCode('Name')} that maps to a ${toCode(
-                        'Webhook URL'
-                    )} to save your bookmarks.`,
+                    content: `⚠️ Add an easy to remember ${toCode(
+                        'Name'
+                    )} (ex: server name or channel name) for this webhook so you don't forget.`,
                 },
                 {
                     type: ComponentType.Label,
                     label: 'Name',
-                    description: 'Example: "Todo", "Important stuff", etc.',
+                    description: 'Name this webhook so you know what it is',
                     component: {
                         type: ComponentType.TextInput,
                         custom_id: TextInputCustomId.configAddName,
@@ -86,7 +86,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                 {
                     type: ComponentType.Label,
                     label: 'Webhook URL',
-                    description: 'Enter a valid Discord Webhook URL.',
+                    description: 'Enter a valid Discord Webhook URL',
                     component: {
                         type: ComponentType.TextInput,
                         custom_id: TextInputCustomId.configAddWebhook,
@@ -126,5 +126,28 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                 components: [],
             },
         })
+    }
+
+    if (interactionId === ButtonCustomId.configView) {
+        const interactionAuthor = getInteractionAuthor(interaction)
+        const config = await getWebhook(c, interactionAuthor.id)
+        if (config === null) {
+            return c.json({
+                type: InteractionResponseType.UpdateMessage,
+                data: {
+                    content:
+                        '❌ No existing config found. Add new config where you can set a webhook to bookmark messages to',
+                    flags: MessageFlags.Ephemeral,
+                },
+            })
+        } else {
+            return c.json({
+                type: InteractionResponseType.UpdateMessage,
+                data: {
+                    content: `- ${toCode(config.name)}: ||${DISCORD_WEBHOOK_BASE}/${config.url}||`,
+                    flags: MessageFlags.Ephemeral,
+                },
+            })
+        }
     }
 }
