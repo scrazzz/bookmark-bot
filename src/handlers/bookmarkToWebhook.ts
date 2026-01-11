@@ -59,7 +59,7 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
         return c.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: `✅ Bookmarked message to your configured [webhook](${messageUrl}) channel (${config.name})`,
+                content: `✅ Bookmarked message to configured webhook (${config.name})\n${messageUrl}`,
                 flags: MessageFlags.Ephemeral,
             },
         })

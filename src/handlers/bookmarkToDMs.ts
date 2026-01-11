@@ -36,13 +36,13 @@ export function createBookmarkedComponent(interaction: APIApplicationCommandInte
             components: [
                 {
                     type: ComponentType.TextDisplay,
-                    content: `- From **${toCode(formatUsername(message.author))}** (${toCode(
-                        message.author.id
-                    )}) in **${interaction.channel.name ? toCode('#' + interaction.channel.name) : 'Your DMs'}**`,
+                    content: `From **${toCode(formatUsername(message.author))}** (${toCode(message.author.id)}) in **${
+                        interaction.channel.name ? toCode('#' + interaction.channel.name) : 'Your DMs'
+                    }**`,
                 },
                 {
                     type: ComponentType.TextDisplay,
-                    content: `- ${jumpUrl}`,
+                    content: `${jumpUrl}`,
                 },
                 {
                     type: ComponentType.Separator,

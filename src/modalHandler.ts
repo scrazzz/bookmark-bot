@@ -49,6 +49,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             })
         } else {
             // new user
+            // stripping webhook url to save char length in KV
             const strippedHook = new URL(hook).pathname.replace(/^\/api\/webhooks\/?/, '')
             const config: BookmarkConfig = { name, url: strippedHook }
             await setWebhook(c, interactionAuthor.id, config)
@@ -57,7 +58,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
         return c.json({
             type: InteractionResponseType.UpdateMessage,
             data: {
-                content: `✅ Added new bookmark config (**${name}**).\n- Use the message command "**${toCode(
+                content: `✅ Added new bookmark config (**${name}**)\nUse the message command "**${toCode(
                     'Bookmark to Webhook'
                 )}**" to bookmark a message to your set webhook!`,
                 components: [],
