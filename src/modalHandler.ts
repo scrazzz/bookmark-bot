@@ -43,7 +43,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             return c.json({
                 type: InteractionResponseType.UpdateMessage,
                 data: {
-                    content: `❌ You have already configured a webhook ("${config.name}").`,
+                    content: `❌ You already have an existing config ("${config.name}").`,
                     components: [],
                 },
             })
@@ -60,7 +60,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             data: {
                 content: `✅ Added new bookmark config (**${name}**)\nUse the message command "**${toCode(
                     'Bookmark to Webhook'
-                )}**" to bookmark a message to your set webhook!`,
+                )}**" to bookmark a message to this webhook!`,
                 components: [],
             },
         })

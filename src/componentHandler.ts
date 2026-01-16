@@ -110,7 +110,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                 type: InteractionResponseType.UpdateMessage,
                 data: {
                     content:
-                        '❌ There is no config to remove since you have not setup one. Add new config below where you can set a webhook to bookmark messages to',
+                        '❌ No existing config found. Add new config below where you can set a webhook to bookmark messages to',
                     flags: MessageFlags.Ephemeral,
                 },
             })
