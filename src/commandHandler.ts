@@ -5,9 +5,9 @@ import {
     InteractionResponseType,
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { bookmarkToDMsHandler } from './handlers/bookmarkToDMs'
-import { bookmarkToWebhookHandler } from './handlers/bookmarkToWebhook'
-import { configHandler } from './handlers/config'
+import { bookmarkToDMsHandler } from './responses/bookmarkToDMs'
+import { bookmarkToWebhookHandler } from './responses/bookmarkToWebhook'
+import { configHandler } from './responses/config'
 import { BOT_INSTALL_URL } from './utils/consts'
 
 /**
