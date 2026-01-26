@@ -72,25 +72,5 @@ If the deployment is successful:
 
 ---
 
-## Project structre
-```gql
-src
-├── index.ts             # Main entry point
-├── commandHandler.ts    # Main interaction handler for all commands
-├── commands.ts          # All the commands are defined here
-├── componentHandler.ts  # Handler for all message components (buttons)
-├── modalHandler.ts      # Handler for all modals
-├── handlers
-│   ├── bookmarkToDMs.ts
-│   ├── bookmarkToWebhook.ts
-│   └── config.ts
-└── utils
-    ├── consts.ts
-    ├── helpers.ts
-    ├── kv
-    │   └── workersKV.ts
-    └── log.ts
-```
-
 ## License
 This project is licensed under the [GNU Affero General Public License v3.0](./LICENSE).

@@ -24,13 +24,13 @@ app.add({
 
 app.add({
     name: 'config',
-    description: 'Config where you want to save your bookmarks to',
+    description: 'Config to save bookmarks to a webhook',
     type: ApplicationCommandType.ChatInput,
 })
 
 app.add({
     name: 'aboutme',
-    description: 'About Bookmark Bot',
+    description: 'More info about this bot',
     type: ApplicationCommandType.ChatInput,
     contexts: [InteractionContextType.Guild, InteractionContextType.PrivateChannel],
     integration_types: [ApplicationIntegrationType.UserInstall],
