@@ -1,14 +1,9 @@
-import {
-    APIApplicationCommandInteraction,
-    ButtonStyle,
-    ComponentType,
-    InteractionResponseType,
-} from 'discord-api-types/v10'
+import { APIApplicationCommandInteraction, InteractionResponseType } from 'discord-api-types/v10'
 import { Context } from 'hono'
 import { bookmarkToDMsHandler } from './responses/bookmarkToDMs'
 import { bookmarkToWebhookHandler } from './responses/bookmarkToWebhook'
 import { configHandler } from './responses/config'
-import { BOT_INSTALL_URL } from './utils/consts'
+import { aboutmeHandler } from './responses/aboutme'
 
 /**
  * This function handles every type of interaction commands and routes to the required command's
@@ -29,25 +24,7 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
         }
 
         case 'aboutme': {
-            return c.json({
-                type: InteractionResponseType.ChannelMessageWithSource,
-                data: {
-                    content: `Easily bookmark any message from any server - right to your DMs or to a specific channel via Webhook.\n-# Developed by @scruzism`,
-                    components: [
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    type: ComponentType.Button,
-                                    style: ButtonStyle.Link,
-                                    label: 'Add Bot',
-                                    url: BOT_INSTALL_URL,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            })
+            return await aboutmeHandler(c)
         }
 
         case 'config': {
