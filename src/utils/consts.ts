@@ -5,6 +5,7 @@ export const DISCORD_IMAGE_BASE = 'https://cdn.discordapp.com'
 export const BOT_WEBHOOK_AVATAR =
     'https://cdn.discordapp.com/attachments/927944825016311858/1415945657113645086/bookmark_bot_webhook.png'
 export const BOT_INSTALL_URL = 'https://discord.com/oauth2/authorize?client_id=812586569902850084'
+export const BOT_GITHUB_URL = 'https://github.com/scrazzz/bookmark-bot'
 
 export const MESSAGE_CONTENT_LIMIT = 2000
 export const TOTAL_EMBED_LIMIT = 6000

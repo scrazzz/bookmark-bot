@@ -8,9 +8,15 @@ import {
     TextInputStyle,
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
-import { ButtonCustomId, DISCORD_WEBHOOK_BASE, ModalCustomId, TextInputCustomId } from './utils/consts'
-import { deleteMessage, getInteractionAuthor, toCode } from './utils/helpers'
-import { deleteWebhook, getWebhook } from './utils/kv/workersKV'
+import {
+    ButtonCustomId,
+    DISCORD_BASE_API,
+    DISCORD_WEBHOOK_BASE,
+    ModalCustomId,
+    TextInputCustomId,
+} from './utils/consts'
+import { getInteractionAuthor, toCode } from './utils/helpers'
+import { deleteWebhook, getWebhook } from './utils/kv'
 
 /**
  * This function handles message components (buttons etc).
@@ -68,7 +74,7 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
                 {
                     type: ComponentType.TextDisplay,
                     content: `⚠️ Add an easy to remember ${toCode(
-                        'Name'
+                        'Name',
                     )} (ex: server name or channel name) for this webhook so you don't forget.`,
                 },
                 {
@@ -150,4 +156,15 @@ export async function messageComponentHandler(c: Context, interaction: APIMessag
             })
         }
     }
+}
+
+export async function deleteMessage(botToken: string, channelId: string, messageId: string) {
+    const resp = await fetch(`${DISCORD_BASE_API}/channels/${channelId}/messages/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+            'User-Agent': `BookmarkBot (https://github.com/scrazzz/bookmark-bot)`,
+            Authorization: `Bot ${botToken}`,
+        },
+    })
+    return resp.ok
 }
