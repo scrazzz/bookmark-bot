@@ -7,9 +7,9 @@ import {
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
 import { getInteractionAuthor, toCode } from '../utils/helpers'
-import { getWebhook } from '../utils/kv/workersKV'
+import { getWebhook } from '../utils/kv'
 import { BOT_WEBHOOK_AVATAR, DISCORD_WEBHOOK_BASE } from '../utils/consts'
-import { createBookmarkedComponent } from './bookmarkToDMs'
+import { formatBookmarkMessage } from '../utils/formatBookmark'
 
 export async function bookmarkToWebhookHandler(c: Context, interaction: APIApplicationCommandInteraction) {
     const interactionAuthor = getInteractionAuthor(interaction)
@@ -25,16 +25,15 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
     }
 
     const webhook = `${DISCORD_WEBHOOK_BASE}/${config.url}?with_components=true&wait=true`
-    const bookmarkComponent = createBookmarkedComponent(interaction)
+    const bookmarkComponent = formatBookmarkMessage(interaction)
     let webhookGuildId = config.guildId
 
     if (webhookGuildId === undefined) {
         // Set the Guild ID for this webhook in KV so we don't have to make additional API requests later.
-        // webhookGuildId is used to create the message URL so that the user can easily find the webhook after bookmarking.
+        // webhookGuildId is used to create the message URL so that the user can easily find the config'd webhook after bookmarking.
         const hook = await fetch(webhook)
         if (hook.status === 200) {
             const js: APIWebhook = await hook.json()
-            // TODO: Look up why this can be undefined from API
             // I'm 99.9% sure the guild ID will be present here
             webhookGuildId = js.guild_id!
         }
@@ -70,7 +69,7 @@ export async function bookmarkToWebhookHandler(c: Context, interaction: APIAppli
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
             content: `❌ Failed to bookmark this message to your configured webhook (${config.name}): ${toCode(
-                webhookPostResp.status + webhookPostResp.statusText
+                webhookPostResp.status + webhookPostResp.statusText,
             )}`,
             flags: MessageFlags.Ephemeral,
         },

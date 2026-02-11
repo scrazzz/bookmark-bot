@@ -6,7 +6,7 @@ import {
 } from 'discord-api-types/v10'
 import { Context } from 'hono'
 import { ModalCustomId } from './utils/consts'
-import { BookmarkConfig, getWebhook, setWebhook } from './utils/kv/workersKV'
+import { BookmarkConfig, getWebhook, setWebhook } from './utils/kv'
 import { toCode } from './utils/helpers'
 
 function isValidWebhookURL(webhookURL: string): boolean {
@@ -15,13 +15,13 @@ function isValidWebhookURL(webhookURL: string): boolean {
 }
 
 /**
- * This function handles all the Modals
+ * This function handles the Modals. Currently we only have a modal to input the webhook details.
  */
 export async function modalHandler(c: Context, interaction: APIModalSubmitInteraction) {
     const modalId = interaction.data.custom_id
 
     if (modalId === ModalCustomId.configAdd) {
-        // name, hook, and interactionAuthor can never be undefined or null here
+        // name, hook, and interactionAuthor can never be undefined or null here since they are required
         const name = ((interaction.data.components[1] as APILabelComponent).component as APITextInputComponent).value!
         const hook = ((interaction.data.components[2] as APILabelComponent).component as APITextInputComponent).value!
         const interactionAuthor = interaction.member ? interaction.member.user : interaction.user!
@@ -43,7 +43,7 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             return c.json({
                 type: InteractionResponseType.UpdateMessage,
                 data: {
-                    content: `❌ You have already configured a webhook ("${config.name}").`,
+                    content: `❌ You already have an existing config ("${config.name}").`,
                     components: [],
                 },
             })
@@ -59,8 +59,8 @@ export async function modalHandler(c: Context, interaction: APIModalSubmitIntera
             type: InteractionResponseType.UpdateMessage,
             data: {
                 content: `✅ Added new bookmark config (**${name}**)\nUse the message command "**${toCode(
-                    'Bookmark to Webhook'
-                )}**" to bookmark a message to your set webhook!`,
+                    'Bookmark to Webhook',
+                )}**" to bookmark a message to this webhook!`,
                 components: [],
             },
         })
