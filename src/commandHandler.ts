@@ -4,6 +4,7 @@ import { bookmarkToDMsHandler } from './responses/bookmarkToDMs'
 import { bookmarkToWebhookHandler } from './responses/bookmarkToWebhook'
 import { configHandler } from './responses/config'
 import { aboutmeHandler } from './responses/aboutme'
+import { pasteHandler } from './responses/paste'
 
 /**
  * This function handles every type of interaction commands and routes to the required command's
@@ -29,6 +30,10 @@ export async function applicationCommandHandler(c: Context, interaction: APIAppl
 
         case 'config': {
             return configHandler(c, interaction)
+        }
+
+        case 'paste': {
+            return pasteHandler(c, interaction)
         }
 
         // Main commands
